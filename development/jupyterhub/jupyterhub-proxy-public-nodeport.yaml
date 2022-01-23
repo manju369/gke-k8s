@@ -1,0 +1,38 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    cloud.google.com/neg: '{"ingress":true}'
+    meta.helm.sh/release-name: jupyterhub
+    meta.helm.sh/release-namespace: default
+  creationTimestamp: "2021-11-20T02:15:08Z"
+  labels:
+    app: jupyterhub
+    app.kubernetes.io/managed-by: Helm
+    chart: jupyterhub-1.2.0
+    component: proxy-public
+    heritage: Helm
+    release: jupyterhub
+  name: proxy-public
+  namespace: default
+spec:
+#  clusterIP: 10.52.1.141
+#  clusterIPs:
+#  - 10.52.1.141
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  selector:
+    component: proxy
+    release: jupyterhub
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}

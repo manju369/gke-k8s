@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jupyter
+  labels:
+    release: jupyter
+spec:
+  replicas:
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: jupyter-headless
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      release: jupyter
+  template:
+    metadata:
+      labels:
+        release: jupyter
+      annotations:
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsUser: 1000
+      containers:
+      - name: jupyter
+        image: "jupyter/base-notebook:ubuntu-20.04"
+        imagePullPolicy: IfNotPresent
+        command: ["start-notebook.sh"]
+        args: ["--NotebookApp.token=''", "--ip=0.0.0.0", "--NotebookApp.allow_origin='*'", "--NotebookApp.base_url='/dumbworks/jupyter'"]
+        env:
+        - name: JUPYTER_TOKEN
+          value: "manju"
+        - name: GRANT_SUDO
+          value: "yes"
+        ports:
+        - name: http
+          containerPort: 8888
+          protocol: TCP
+        - name: blockmanager
+          containerPort: 7777
+          protocol: TCP
+        - name: driver
+          containerPort: 2222
+          protocol: TCP
+        volumeMounts:
+        - name: notebook-data
+          mountPath: /home/jovyan/work
+        resources:
+          limits:
+            cpu: 200m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+      initContainers:
+      - name: change-ownership-container
+        image: busybox
+        command: ["/bin/chown","-R","1000:1000", "/home/jovyan/work"]
+        securityContext:
+          runAsUser: 0
+          privileged: true
+        volumeMounts:
+        - name: notebook-data
+          mountPath: /home/jovyan/work
+      volumes:
+      - name: notebook-data
+        persistentVolumeClaim:
+          claimName: jupyter-pvc

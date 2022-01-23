@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-history-server
+  namespace: default
+  labels: 
+    app: spark-history-server 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-history-server
+  template:
+    metadata:
+      name: spark-history-server
+      labels:
+        app: spark-history-server
+    spec:
+      securityContext:
+        runAsUser: 1000
+      containers:
+        - name: spark-history-server
+          image: gcr.io/spark-operator/spark:v3.1.1
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "100m"
+          command:
+            - /opt/spark/bin/spark-class
+            - -Dspark.history.fs.logDirectory=/data/
+            - org.apache.spark.deploy.history.HistoryServer
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 18080
+          readinessProbe:
+            timeoutSeconds: 4
+            httpGet:
+              path: /
+              port: http
+          livenessProbe:
+            timeoutSeconds: 4
+            httpGet:
+              path: /
+              port: http
+          volumeMounts:
+            - name: spark-history-server-data
+              mountPath: /data
+      initContainers:
+      - name: change-ownership-container
+        image: busybox
+        command: ["/bin/chown","-R","1000:1000", "/data/"]
+        securityContext:
+          runAsUser: 0
+          privileged: true
+        volumeMounts:
+        - name: spark-history-server-data
+          mountPath: /data
+      volumes:
+      - name: spark-history-server-data
+        persistentVolumeClaim:
+          claimName: spark-history-server-pvc

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: webserver
+    release: airflow
+    service: airflow_de
+    team: data-engineering
+    tier: airflow
+  name: airflow-webserver-nodeport
+  namespace: default
+spec:
+  type: NodePort
+  ports:
+  - name: airflow-ui
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    component: webserver
+    release: airflow
+    tier: airflow

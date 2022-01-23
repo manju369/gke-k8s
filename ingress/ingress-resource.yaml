@@ -16,7 +16,7 @@ metadata:
    # nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
 spec:
   rules:
-  - host: "35.247.247.59.nip.io"
+  - host: "35.222.166.129.nip.io"
     http:
       paths:
       #- pathType: ImplementationSpecific

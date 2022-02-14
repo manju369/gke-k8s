@@ -1,4 +1,3 @@
-# nifi-kubernetes-aks
 To set-up Nifi with Statefulset
 
 

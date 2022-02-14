@@ -33,7 +33,7 @@ spec:
   sparkVersion: "3.2.0"
   sparkConf:
     "spark.eventLog.enabled": "true"
-    "spark.eventLog.dir": "file:/tmp"
+    "spark.eventLog.dir": "file:/tmp/"
   restartPolicy:
     type: Never
   volumes:

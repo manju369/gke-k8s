@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: airflow-logs-pvc
+  namespace: default
+  labels:
+    app: airflow-logs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: airflow-logs-storage-class
+  resources:
+    requests:
+      storage: 20Gi

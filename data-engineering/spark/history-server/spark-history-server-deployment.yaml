@@ -16,47 +16,37 @@ spec:
       labels:
         app: spark-history-server
     spec:
-      securityContext:
-        runAsUser: 1000
+      serviceAccountName: spark
       containers:
         - name: spark-history-server
-          image: gcr.io/spark-operator/spark:v3.1.1
+          image: manju369/spark-3.2.0-bin-hadoop3.2-gcs:2
+          imagePullPolicy: Always
           resources:
             requests:
               memory: "512Mi"
               cpu: "100m"
           command:
-            - /opt/spark/bin/spark-class
-            - -Dspark.history.fs.logDirectory=/data/
-            - org.apache.spark.deploy.history.HistoryServer
+            -  "/usr/lib/jvm/java-8-openjdk-amd64/bin/java"
+          args:
+            - "-cp" 
+            - "/opt/spark/conf/:/opt/spark/jars/*"
+            - "-Xmx1g"
+            - "org.apache.spark.deploy.history.HistoryServer"
           ports:
             - name: http
               protocol: TCP
               containerPort: 18080
-          readinessProbe:
-            timeoutSeconds: 4
-            httpGet:
-              path: /
-              port: http
-          livenessProbe:
-            timeoutSeconds: 4
-            httpGet:
-              path: /
-              port: http
           volumeMounts:
-            - name: spark-history-server-data
-              mountPath: /data
-      initContainers:
-      - name: change-ownership-container
-        image: busybox
-        command: ["/bin/chown","-R","1000:1000", "/data/"]
-        securityContext:
-          runAsUser: 0
-          privileged: true
-        volumeMounts:
-        - name: spark-history-server-data
-          mountPath: /data
+            - name: spark-defaults-config-file
+              mountPath: /opt/spark/conf/
+            - name: spark-gcs-bucket-secret
+              mountPath: /mnt/secrets/
+              readOnly: true
       volumes:
-      - name: spark-history-server-data
-        persistentVolumeClaim:
-          claimName: spark-history-server-pvc
+      - name: spark-defaults-config-file
+        configMap:
+          defaultMode: 0777
+          name: spark-defaults-configmap
+      - name: spark-gcs-bucket-secret
+        secret:
+          secretName: gcs-bq

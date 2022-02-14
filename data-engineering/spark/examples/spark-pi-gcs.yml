@@ -1,0 +1,40 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: foo-gcs-bg
+  namespace: default
+spec:
+  type: Scala
+  mode: cluster
+  image: manju369/spark-3.2.0-bin-hadoop3.2-gcs:1 
+  imagePullPolicy: IfNotPresent
+  mainClass: org.apache.spark.examples.SparkPi
+  mainApplicationFile: "gs://steam-circlet-first-bucket/spark-jars/spark-examples_2.12-3.2.0.jar"
+  hadoopConf:
+    "fs.gs.project.id": "steam-circlet-330806"
+    "fs.gs.system.bucket": "steam-circlet-first-bucket"
+    "google.cloud.auth.service.account.enable": "true"
+    "google.cloud.auth.service.account.json.keyfile": "/mnt/secrets/key.json"
+  sparkVersion: "3.2.0"
+  sparkConf:
+    "spark.eventLog.enabled": "true"
+    "spark.eventLog.dir": "gs://steam-circlet-first-bucket/spark-events/"
+  driver:
+    cores: 1
+    secrets:
+    - name: "gcs-bq"
+      path: "/mnt/secrets"
+      secretType: GCPServiceAccount
+    envVars:
+      GCS_PROJECT_ID: foo
+    serviceAccount: spark
+  executor:
+    instances: 2
+    cores: 1
+    memory: "512m"
+    secrets:
+    - name: "gcs-bq"
+      path: "/mnt/secrets"
+      secretType: GCPServiceAccount
+    envVars:
+      GCS_PROJECT_ID: foo

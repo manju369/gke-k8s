@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spark-defaults-configmap
+  namespace: default
+data:
+  spark-defaults.conf: |
+    spark.hadoop.google.cloud.auth.service.account.enable       true
+    spark.hadoop.google.cloud.auth.service.account.json.keyfile /mnt/secrets/key.json
+    spark.yarn.historyServer.address                            http://127.0.0.1:18080
+    spark.eventLog.enabled                                      true
+    spark.eventLog.dir                                          gs://steam-circlet-first-bucket/spark-events/
+    spark.history.fs.logDirectory                               gs://steam-circlet-first-bucket/spark-events/ 
+    spark.metrics.namespace                                     ${spark.app.name}
+    spark.history.fs.cleaner.enabled                            true
+    spark.history.fs.cleaner.maxAge                             72h
+    spark.history.fs.cleaner.interval                           2h

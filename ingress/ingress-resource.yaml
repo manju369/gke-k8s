@@ -47,7 +47,7 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: airflow-webserver-nodeport
+            name: gke-test-airflow-webserver
             port:
               number: 8080
 

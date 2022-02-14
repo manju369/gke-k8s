@@ -1126,8 +1126,8 @@ registry:
 # Elasticsearch logging configuration
 elasticsearch:
   # Enable elasticsearch task logging
-  #enabled: false
-  enabled: True
+  enabled: false
+  #enabled: True
   # A secret containing the connection
   secretName: ~
   # Or an object representing the connection
@@ -1380,12 +1380,11 @@ dags:
 logs:
   persistence:
     # Enable persistent volume for storing logs
-    enabled: false
-    #enabled: true
+    #enabled: false
+    enabled: true
     # Volume size for logs
     size: 10Gi
     # If using a custom storageClass, pass name here
-    storageClassName:
+    storageClassName: airflow-logs-storage-class 
     ## the name of an existing PVC to use
-    existingClaim:
-
+    existingClaim: airflow-logs-pvc

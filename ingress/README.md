@@ -5,6 +5,7 @@ helm repo update
 helm install nginx-ingress ingress-nginx/ingress-nginx
 
 kubectl get deployment nginx-ingress-ingress-nginx-controller
+
 kubectl get service nginx-ingress-ingress-nginx-controller
 
 # Creating external IP might take some time

@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nifi-config
+  labels:
+    app: nifi-config
+data:
+  NIFI_WEB_HTTP_HOST: "0.0.0.0"
+  NIFI_WEB_HTTP_PORT: "9080"
+  NIFI_JVM_HEAP_INIT: "512m"
+  NIFI_JVM_HEAP_MAX: "512m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nifi-app
+  labels:
+    app: nifi-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nifi-server
+  template:
+    metadata:
+      labels:
+        app: nifi-server
+    spec:
+      containers:
+        - name: nifi-app
+          image: apache/nifi
+          ports:
+          - containerPort: 9080
+         # resources:
+         #   requests:
+         #     cpu: 200m
+         #     memory: 500M
+         #   limits:
+         #     cpu: 300m
+         #     memory: 1Gi
+          envFrom:
+          - configMapRef:
+              name: nifi-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nifi-service
+  labels:
+    app: nifi-service
+spec:
+  selector:
+    app: nifi-server
+  ports:
+    - protocol: TCP
+      name: http
+      port: 9080
+      targetPort: 9080

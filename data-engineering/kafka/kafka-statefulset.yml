@@ -1,0 +1,93 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-headless
+  labels:
+    app: kafka
+spec:
+  ports:
+  - port: 9092
+    name: server
+  - port: 9075
+    name: jmx
+  clusterIP: None
+  selector:
+    app: kafka
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+spec:
+  selector:
+    matchLabels:
+      app: kafka
+  serviceName: kafka-headless
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: kafka
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9075'
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: kafka
+        imagePullPolicy: Always
+        image: manju369/kafka:2.11-1.1.0-test-1
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "0.5"
+        ports:
+        - containerPort: 9092
+          name: server
+        - containerPort: 9075
+          name: jmx
+        command:
+        - sh
+        - -c
+        - "exec kafka-server-start.sh /opt/kafka/config/server.properties  --override broker.id=${HOSTNAME##*-} \
+          --override zookeeper.connect=zookeeper-0.zookeeper-headless.default.svc.cluster.local:2181 \
+          --override advertised.listeners=PLAINTEXT://${HOSTNAME}:9092 \
+          --override log.dirs=/var/lib/kafka/kafka-logs \
+          --override num.network.threads=10 \
+          --override num.io.threads=15 \
+          --override socket.send.buffer.bytes=102400 \ 
+          --override socket.receive.buffer.bytes=102400 \
+          --override socket.request.max.bytes=1024850 \
+          --override num.partitions=1 \
+          --override num.recovery.threads.per.data.dir=1 \
+          --override offsets.topic.replication.factor=1 \
+          --override transaction.state.log.replication.factor=1 \
+          --override transaction.state.log.min.isr=1 \
+          --override log.retention.hours=168 \
+          --override log.segment.bytes=1073741824 \
+          --override log.retention.check.interval.ms=300000 \
+          --override zookeeper.connection.timeout.ms=10000 \
+          --override delete.topic.enable=true "
+        env:
+        - name: KAFKA_HEAP_OPTS
+          value : "-Xmx512M -Xms512M"
+        - name: KAFKA_OPTS
+          value: "-Dlogging.level=INFO -javaagent:/opt/jmx_exporter/jmx_prometheus_javaagent-0.3.0.jar=9075:/opt/jmx_exporter/prom-jmx-agent-config.yml "
+        volumeMounts:
+        - name: kafka-data
+          mountPath: /var/lib/kafka
+      #  readinessProbe:
+      #    exec:
+      #     command:
+      #      - sh
+      #      - -c
+      #      - "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server=localhost:9092"
+      volumes:
+      - name: kafka-data
+        persistentVolumeClaim:
+          claimName: kafka-azure-managed-default-disk

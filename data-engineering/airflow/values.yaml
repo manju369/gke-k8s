@@ -1319,8 +1319,9 @@ dags:
     #repo: https://github.com/apache/airflow.git
     #branch: v2-1-stable
     #repo: https://_WingCode_@bitbucket.org/_wingcode_/airflow-dags.git
-    repo: git@bitbucket.org:_wingcode_/airflow-dags.git
-    branch: master
+    #repo: git@bitbucket.org:_wingcode_/airflow-dags.git
+    repo: git@github.com:manju369/pipelines.git
+    branch: main
     rev: HEAD
     depth: 1
     # the number of consecutive failures allowed before aborting
@@ -1328,7 +1329,7 @@ dags:
     # subpath within the repo where dags are located
     # should be "" if dags are at repo root
     #subPath: "tests/dags"
-    subPath: ""
+    subPath: "airflow/airflow-dags/"
     # if your repo needs a user name password
     # you can load them to a k8s secret like the one below
     #   ---

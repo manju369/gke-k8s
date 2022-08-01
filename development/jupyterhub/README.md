@@ -1,5 +1,18 @@
- helm install jupyterhub  jupyterhub/jupyterhub  --namespace default --values=values.yaml  --debug
-or 
+
+helm install jupyterhub  jupyterhub/jupyterhub  --namespace default --values=values.yaml  --debug
+
+ 
 helm upgrade --install jupyterhub  jupyterhub/jupyterhub  --namespace default --values=values.yaml --debug
+
+
 URL
-#https://35.247.247.59.nip.io/dumbworks/development/jupyter/user
+
+#https://35.247.247.59.nip.io/manjuworks/development/jupyter/user
+
+
+#Deletion
+
+
+helm ls
+
+helm delete jupyterhub -n default

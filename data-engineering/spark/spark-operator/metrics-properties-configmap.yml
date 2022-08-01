@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metrics-properties-configmap
+  namespace: default
+data:
+  metrics.properties: | 
+    "spark.metrics.conf.*.sink.graphite.class" = "org.apache.spark.metrics.sink.GraphiteSink"
+    "spark.metrics.conf.*.sink.graphite.host" = "graphite-exporter.default.svc.cluster.local"
+    "spark.metrics.conf.*.sink.graphite.port" = 9109
+    "spark.metrics.conf.*.sink.graphite.period" = 10
+    "spark.metrics.conf.*.sink.graphite.unit" = seconds
+    "spark.metrics.conf.*.sink.graphite.prefix" = "optional_prefix"
+    "spark.metrics.conf.*.sink.graphite.regex" = "optional_regex_to_send_matching_metrics"
+    "*.sink.servlet.class" = "org.apache.spark.metrics.sink.MetricsServlet"
+    "*.sink.servlet.path" = "/metrics/json"
+    "master.sink.servlet.path" = "/metrics/master/json"
+    "applications.sink.servlet.path" = "/metrics/applications/json"

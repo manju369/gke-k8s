@@ -1,13 +1,32 @@
 helm repo add apache-airflow https://airflow.apache.org
+
 helm repo update
+
 helm upgrade --install airflow apache-airflow/airflow -n default -f values.yaml
+
 helm show values apache-airflow/airflow > values.yaml
+
+#Logs PVC
+
+kubectl apply -f  airflow-logs-storage-class.yml 
+
+kubectl apply -f airflow-logs-pvc.yml
+
 #ssh-key shouldn't be encoded manually
+
 kubectl create secret generic airflow-ssh-secret --from-file=gitSshKey=/Users/manjunath/Downloads/bitbucket_ssh-1
+
+kubectl apply -f airflow-worker-spark-service-account.yml 
+
 kubectl exec -it airflow-scheduler-86d8459b64-th6rx -c scheduler /bin/bash #OR
+
 kubectl exec -it airflow-scheduler-86d8459b64-th6rx -c scheduler /bin/ls  dags/
+
 kubectl logs airflow-scheduler-86d8459b64-th6rx -c git-sync
 
+
+
+#Open source docs
 https://airflow.apache.org/docs/helm-chart/stable/production-guide.html#production-guide-knownhosts
 https://airflow.apache.org/docs/docker-stack/build.html
 https://airflow.apache.org/docs/helm-chart/stable/manage-logs.html

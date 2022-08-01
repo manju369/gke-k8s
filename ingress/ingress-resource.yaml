@@ -5,28 +5,31 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/affinity: "cookie"
-    nginx.ingress.kubernetes.io/session-cookie-name: "route"
-    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
-    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
-    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
-    nginx.ingress.kubernetes.io/affinity-mode: persistent
+    #ingress.kubernetes.io/rewrite-target: /
+    #nginx.ingress.kubernetes.io/use-regex: "true"
+    #nginx.ingress.kubernetes.io/affinity: "cookie"
+    #nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    #nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+    #nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    #nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+    #nginx.ingress.kubernetes.io/affinity-mode: persistent
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Script-Name /pgadmin-stage;
    # nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
 spec:
   rules:
-  - host: "35.222.166.129.nip.io"
+  - host: "34.70.248.62.nip.io"
     http:
       paths:
-      #- pathType: ImplementationSpecific
-      #  path: /nifi/
-      #  backend:
-      #    service:
-      #      name: nifi-nodeport-service
-      #      port:
-      #        number: 9080
 
+      - pathType: ImplementationSpecific
+        path: /pgadmin-stage
+        backend:
+          service:
+            name: pgadmin-service
+            port:
+              number: 80
+      
       - pathType: ImplementationSpecific
         path: /nifi
         backend:

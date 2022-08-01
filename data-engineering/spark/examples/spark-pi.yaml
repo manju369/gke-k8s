@@ -1,42 +1,38 @@
-#
-# Copyright 2017 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
   name: spark-pi
+  #name: spark-pi-{{ macros.datetime.now().strftime('%Y-%m-%d-%H-%M-%S') }}-{{ task_instance.try_number }}
   namespace: default
 spec:
   type: Scala
   mode: cluster
-  #image: "gcr.io/spark-operator/spark:v3.1.1"
-  #image: "manju369/spark-3.0.3-bin-hadoop2.7:1"
   image: "manju369/spark-3.2.0-bin-hadoop3.2:4"
   imagePullPolicy: Always
   mainClass: org.apache.spark.examples.SparkPi
-  #mainApplicationFile: "local:///opt/spark/examples/jars/spark-examples_2.12-3.1.1.jar"
-  #mainApplicationFile: "local:///opt/spark/examples/jars/spark-examples_2.12-3.0.3.jar"
   mainApplicationFile: "local:///opt/spark/examples/jars/spark-examples_2.12-3.2.0.jar"
   #sparkVersion: "3.1.1"
   sparkVersion: "3.2.0"
   sparkConf:
     "spark.eventLog.enabled": "true"
     "spark.eventLog.dir": "file:/tmp/"
+    "spark.metrics.conf.*.sink.graphite.class": "org.apache.spark.metrics.sink.GraphiteSink"
+    "spark.metrics.conf.*.sink.graphite.host": "graphite-exporter.default.svc.cluster.local"
+    "spark.metrics.conf.*.sink.graphite.port": "9109"
+    "spark.metrics.conf.*.sink.graphite.period": "10"
+    "spark.metrics.conf.*.sink.graphite.unit":  "seconds"
+    "spark.metrics.conf.*.sink.graphite.prefix": "optional_prefix"
+    "spark.metrics.conf.*.sink.graphite.regex": "optional_regex_to_send_matching_metrics"
+    "*.sink.servlet.class": "org.apache.spark.metrics.sink.MetricsServlet"
+    "*.sink.servlet.path": "/metrics/json"
+    "master.sink.servlet.path": "/metrics/master/json"
+    "applications.sink.servlet.path": "/metrics/applications/json"
   restartPolicy:
     type: Never
   volumes:
+    - name: spark-metrics-configmap
+      configMap:
+        name: metrics-properties-configmaiiiiiip
     - name: "test-volume"
       hostPath:
         path: "/tmp"
@@ -48,20 +44,35 @@ spec:
     labels:
       version: 3.1.1
     serviceAccount: spark
+    configMaps:
+      - name: configmap1
+        path: /mnt/config-maps
     volumeMounts:
       - name: "test-volume"
         mountPath: "/tmp"
+      #- name: spark-metrics-configmap
+      #  mountPath: /etc/metrics.properties
+      #  subPath: metrics.properties
   executor:
     cores: 1
     instances: 1
     memory: "512m"
     labels:
       version: 3.1.1
+    serviceAccount: spark
+    configMaps:
+      - name: configmap1
+        path: /mnt/config-maps
     volumeMounts:
       - name: "test-volume"
         mountPath: "/tmp"
+      #- name: spark-metrics-configmap
+      #  mountPath: /etc/metrics.properties
+      #  subPath: metrics.properties
   monitoring:
+    #metricsPropertiesFile: local:///opt/spark/conf/metrics.properties
+    metricsPropertiesFile: local:///etc/metrics.properties
     exposeDriverMetrics: true
     exposeExecutorMetrics: true
     prometheus:
-      jmxExporterJar: "/opt/spark/jars/jmx_prometheus_javaagent-0.11.0.jar"  
+      jmxExporterJar: "/opt/spark/jars/jmx_prometheus_javaagent-0.11.0.jar"

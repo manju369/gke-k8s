@@ -1,0 +1,353 @@
+NAME: spark-operator-release
+LAST DEPLOYED: Mon Jun 20 09:50:38 2022
+NAMESPACE: default
+STATUS: pending-install
+REVISION: 1
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+affinity: {}
+batchScheduler:
+  enable: false
+controllerThreads: 10
+fullnameOverride: ""
+image:
+  pullPolicy: IfNotPresent
+  repository: gcr.io/spark-operator/spark-operator
+  tag: latest
+imagePullSecrets: []
+ingressUrlFormat: ""
+istio:
+  enabled: false
+labelSelectorFilter: ""
+leaderElection:
+  lockName: spark-operator-lock
+  lockNamespace: ""
+logLevel: 2
+metrics:
+  enable: true
+  endpoint: /metrics
+  port: 10254
+  portName: metrics
+  prefix: ""
+nameOverride: ""
+nodeSelector: {}
+podAnnotations: {}
+podLabels: {}
+podMonitor:
+  enable: false
+  jobLabel: spark-operator-podmonitor
+  labels: {}
+  podMetricsEndpoint:
+    interval: 5s
+    scheme: http
+podSecurityContext: {}
+rbac:
+  create: false
+  createClusterRole: true
+  createRole: true
+replicaCount: 1
+resourceQuotaEnforcement:
+  enable: false
+resources: {}
+resyncInterval: 30
+securityContext: {}
+serviceAccounts:
+  spark:
+    annotations: {}
+    create: true
+    name: ""
+  sparkoperator:
+    annotations: {}
+    create: true
+    name: ""
+sparkJobNamespace: ""
+tolerations: []
+uiService:
+  enable: true
+webhook:
+  cleanupAnnotations:
+    helm.sh/hook: pre-delete, pre-upgrade
+    helm.sh/hook-delete-policy: hook-succeeded
+  enable: false
+  initAnnotations:
+    helm.sh/hook: pre-install, pre-upgrade
+    helm.sh/hook-weight: "50"
+  namespaceSelector: ""
+  port: 8080
+  timeout: 30
+
+HOOKS:
+---
+# Source: spark-operator/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spark-operator-release
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": hook-failed, before-hook-creation
+  labels:
+    helm.sh/chart: spark-operator-1.1.13
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark-operator-release
+    app.kubernetes.io/version: "v1beta2-1.2.3-3.1.1"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: spark-operator/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spark-operator-release
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": hook-failed, before-hook-creation
+  labels:
+    helm.sh/chart: spark-operator-1.1.13
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark-operator-release
+    app.kubernetes.io/version: "v1beta2-1.2.3-3.1.1"
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - configmaps
+  - secrets
+  verbs:
+  - create
+  - get
+  - delete
+  - update
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - create
+  - get
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - resourcequotas
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - create
+  - get
+  - update
+  - delete
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
+  verbs:
+  - create
+  - get
+  - update
+  - delete
+- apiGroups:
+  - sparkoperator.k8s.io
+  resources:
+  - sparkapplications
+  - sparkapplications/status
+  - scheduledsparkapplications
+  - scheduledsparkapplications/status
+  verbs:
+  - "*"
+---
+# Source: spark-operator/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: spark-operator-release
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": hook-failed, before-hook-creation
+  labels:
+    helm.sh/chart: spark-operator-1.1.13
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark-operator-release
+    app.kubernetes.io/version: "v1beta2-1.2.3-3.1.1"
+    app.kubernetes.io/managed-by: Helm
+subjects:
+  - kind: ServiceAccount
+    name: spark-operator-release
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: spark-operator-release
+  apiGroup: rbac.authorization.k8s.io
+MANIFEST:
+---
+# Source: spark-operator/templates/spark-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spark-operator-release-spark
+  namespace: default
+  labels:
+    helm.sh/chart: spark-operator-1.1.13
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark-operator-release
+    app.kubernetes.io/version: "v1beta2-1.2.3-3.1.1"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: spark-operator/templates/spark-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: spark-role
+  namespace: default
+  labels:
+    helm.sh/chart: spark-operator-1.1.13
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark-operator-release
+    app.kubernetes.io/version: "v1beta2-1.2.3-3.1.1"
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - "*"
+---
+# Source: spark-operator/templates/spark-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spark
+  namespace: default
+  labels:
+    helm.sh/chart: spark-operator-1.1.13
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark-operator-release
+    app.kubernetes.io/version: "v1beta2-1.2.3-3.1.1"
+    app.kubernetes.io/managed-by: Helm
+subjects:
+- kind: ServiceAccount
+  name: spark-operator-release-spark
+  namespace: default
+roleRef:
+  kind: Role
+  name: spark-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: spark-operator/templates/deployment.yaml
+# If the admission webhook is enabled, then a post-install step is required
+# to generate and install the secret in the operator namespace.
+
+# In the post-install hook, the token corresponding to the operator service account
+# is used to authenticate with the Kubernetes API server to install the secret bundle.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-operator-release
+  labels:
+    helm.sh/chart: spark-operator-1.1.13
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark-operator-release
+    app.kubernetes.io/version: "v1beta2-1.2.3-3.1.1"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: spark-operator
+      app.kubernetes.io/instance: spark-operator-release
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
+        prometheus.io/path: /metrics
+      labels:
+        app.kubernetes.io/name: spark-operator
+        app.kubernetes.io/instance: spark-operator-release
+    spec:
+      serviceAccountName: spark-operator-release
+      securityContext:
+        {}
+      containers:
+      - name: spark-operator
+        image: gcr.io/spark-operator/spark-operator:latest
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          {}
+        ports:
+          - name: "metrics"
+            containerPort: 10254
+        
+        args:
+        - -v=2
+        - -logtostderr
+        - -namespace=
+        - -enable-ui-service=true
+        - -ingress-url-format=
+        - -controller-threads=10
+        - -resync-interval=30
+        - -enable-batch-scheduler=false
+        - -label-selector-filter=
+        - -enable-metrics=true
+        - -metrics-labels=app_type
+        - -metrics-port=10254
+        - -metrics-endpoint=/metrics
+        - -metrics-prefix=
+        - -enable-resource-quota-enforcement=false
+        resources:
+          {}
+

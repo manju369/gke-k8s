@@ -14,7 +14,7 @@ data:
                 "name": "prometheus",
                 "orgId": 1,
                 "type": "prometheus",
-                "url": "http://prometheus-service.default.svc:9090/dumbworks/prometheus",
+                "url": "http://prometheus-service.default.svc:9090/manjuworks/prometheus",
                 "version": 1
             }
         ]
@@ -28,4 +28,4 @@ metadata:
   labels:
     app: grafana
 data:
-  GF_SERVER_ROOT_URL :  "http://localhost:3000/dumbworks/grafana"
+  GF_SERVER_ROOT_URL :  "http://localhost:3000/manjuworks/grafana"

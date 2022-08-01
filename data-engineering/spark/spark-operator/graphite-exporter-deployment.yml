@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: graphite-exporter-configmap
+  labels:
+    app: graphite-exporter
+data:
+  graphite_mapping.conf: |
+    mappings:
+    - match: '*.*.executor.threadpool.*'
+      name: executor_tasks
+      labels:
+        application: $1
+        executor_id: $2
+        qty: $3
+
+    - match: '*.*.executor.filesystem.*.*'
+      name: filesystem_usage
+      labels:
+        application: $1
+        executor_id: $2
+        fs_type: $3
+        qty: $4
+
+    - match: '*.*.jvm.*.*'
+      name: jvm_memory_usage
+      labels:
+        application: $1
+        executor_id: $2
+        mem_type: $3
+        qty: $4
+
+    - match: '*.*.jvm.pools.*.*'
+      name: jvm_memory_pools
+      labels:
+        application: $1
+        executor_id: $2
+        mem_type: $3
+        qty: $4
+
+    - match: '*.*.BlockManager.*.*'
+      name: block_manager
+      labels:
+        application: $1
+        executor_id: $2
+        type: $3
+        qty: $4
+
+    - match: '*.*.DAGScheduler.*.*'
+      name: DAG_scheduler
+      labels:
+        application: $1
+        executor_id: $2
+        type: $3
+        qty: $4
+     
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ labels:
+   app: graphite-exporter
+ name: graphite-exporter
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+     app: graphite-exporter
+ template:
+   metadata:
+     annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9108'
+     labels:
+       app: graphite-exporter
+   spec:
+     containers:
+     - image: prom/graphite-exporter:v0.12.0
+       name: graphite-exporter
+       resources:
+         requests:
+           memory: "128Mi"
+           cpu: "250m"
+         limits:
+           memory: "328Mi"
+           cpu: "500m"
+       #command:
+       #  -  "/bin/graphite_exporter" #Already this part is there in Image as Entrypoint 
+       args:
+         - "--graphite.mapping-config=/tmp/graphite_mapping.conf"
+       ports:
+       - containerPort: 9108
+         name: outgoing-port
+       - containerPort: 9109
+         name: incoming-port
+       volumeMounts:
+         - name: graphite-exporter-config
+           mountPath: /tmp/graphite_mapping.conf
+           subPath: graphite_mapping.conf
+     volumes:
+     - name: graphite-exporter-config
+       configMap:
+         name: graphite-exporter-configmap
+         defaultMode: 0777
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: graphite-exporter
+ labels:
+   app: graphite-exporter
+spec:
+ type: ClusterIP
+ ports:
+ - port: 9108
+   protocol: TCP
+   targetPort: 9108
+   name: outgoing-port
+ - port: 9109
+   protocol: TCP
+   targetPort: 9109
+   name: incoming-port
+ selector:
+   app: graphite-exporter

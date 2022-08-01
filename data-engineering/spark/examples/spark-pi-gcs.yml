@@ -1,7 +1,7 @@
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: foo-gcs-bg
+  name: foo-gcs-spark
   namespace: default
 spec:
   type: Scala
@@ -11,7 +11,7 @@ spec:
   mainClass: org.apache.spark.examples.SparkPi
   mainApplicationFile: "gs://steam-circlet-first-bucket/spark-jars/spark-examples_2.12-3.2.0.jar"
   hadoopConf:
-    "fs.gs.project.id": "steam-circlet-330806"
+    "fs.gs.project.id": "arctic-surf-351605"
     "fs.gs.system.bucket": "steam-circlet-first-bucket"
     "google.cloud.auth.service.account.enable": "true"
     "google.cloud.auth.service.account.json.keyfile": "/mnt/secrets/key.json"

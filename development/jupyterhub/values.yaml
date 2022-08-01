@@ -37,7 +37,7 @@ hub:
       nodePort:
     extraPorts: []
     loadBalancerIP:
-  baseUrl: /dumbworks/development/jupyter
+  baseUrl: /manjuworks/development/jupyter
   cookieSecret:
   initContainers: []
   fsGid: 1000
@@ -302,7 +302,11 @@ proxy:
 singleuser:
   podNameTemplate:
   extraTolerations: []
-  nodeSelector: {}
+  #nodeSelector: {}
+  nodeSelector:
+    cloud.google.com/gke-spot: "true"
+    #node: Jupiter
+    #Pod should match all these node labels to land on this node
   extraNodeAffinity:
     required: []
     preferred: []
@@ -345,7 +349,10 @@ singleuser:
   extraLabels:
     hub.jupyter.org/network-access-hub: "true"
   extraFiles: {}
-  extraEnv: {}
+  #extraEnv: {}
+  extraEnv:
+    GRANT_SUDO: "yes"
+    NOTEBOOK_ARGS: "--allow-root"
   lifecycleHooks: {}
   initContainers: []
   extraContainers: []

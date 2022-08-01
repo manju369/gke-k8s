@@ -20,19 +20,19 @@ spec:
         - name: prometheus-app
           image: prom/prometheus
           args:
-             - "--storage.tsdb.retention.time=8h"
+             - "--storage.tsdb.retention.time=168h"
              - "--config.file=/etc/prometheus/prometheus.yml"
              - "--storage.tsdb.path=/prometheus/"
-             - "--web.external-url=http://localhost:9090/dumbworks/prometheus/"
+             - "--web.external-url=http://localhost:9090/manjuworks/prometheus/"
           ports:
             - containerPort: 9090
           resources:
             requests:
-              cpu: 500m
-              memory: 500M
+              cpu: 300m
+              memory: 400M
             limits:
-              cpu: 1
-              memory: 1Gi
+              cpu: 350M
+              memory: 450Mi
           volumeMounts:
             - name: prometheus-config-volume
               mountPath: /etc/prometheus/

@@ -10,7 +10,8 @@ data:
     spark.yarn.historyServer.address                            http://127.0.0.1:18080
     spark.eventLog.enabled                                      true
     spark.eventLog.dir                                          gs://steam-circlet-first-bucket/spark-events/
-    spark.history.fs.logDirectory                               gs://steam-circlet-first-bucket/spark-events/ 
+    spark.history.fs.logDirectory                               gs://steam-circlet-first-bucket/spark-events/
+    #spark.ui.proxyBase                                          /history-logs 
     #spark.metrics.namespace                                     ${spark.app.name}
     #spark.history.fs.cleaner.enabled                            true
     #spark.history.fs.cleaner.maxAge                             72h

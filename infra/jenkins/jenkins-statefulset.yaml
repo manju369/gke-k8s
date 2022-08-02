@@ -1,5 +1,5 @@
-#kind: Deployment
-kind: StatefulSet
+kind: Deployment
+#kind: StatefulSet
 apiVersion: apps/v1
 metadata:
   name: jenkins-master
@@ -8,7 +8,7 @@ metadata:
     app: jenkins-master
 spec:
   replicas: 1
-  serviceName: jenkins-ui
+  #serviceName: jenkins-ui
   selector:
     matchLabels:
       app: jenkins-master
@@ -30,13 +30,15 @@ spec:
       containers:
       - name: jenkins
         image: jenkins/jenkins:2.346.2
-        imagePullPolicy: Always
+        #imagePullPolicy: Always
         ports:
-        - containerPort: 8080
-        - containerPort: 50000
+        - name: httpport
+          containerPort: 8080
+        - name: jnlpport
+          containerPort: 50000
         readinessProbe:
           httpGet:
-            path: /login
+            path: /jenkins/login
             port: 8080
           initialDelaySeconds: 300
           periodSeconds: 10
@@ -45,7 +47,7 @@ spec:
           failureThreshold: 5
         env:
         - name: JENKINS_OPTS
-          value: --prefix=/jenkins
+          value: "--prefix=/jenkins --httpListenAddress=0.0.0.0"
         resources:
           limits:
             cpu: 500m

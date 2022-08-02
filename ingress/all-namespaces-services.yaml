@@ -7,11 +7,10 @@ spec:
   externalName: kibana.infra.svc.cluster.local
 
 ---
-
 kind: Service
 apiVersion: v1
 metadata:
   name: ingress-jenkins
 spec:
   type: ExternalName
-  externalName: jenkins-ui.jenkins.svc.cluster.local
+  externalName: jenkins-ext.jenkins.svc.cluster.local

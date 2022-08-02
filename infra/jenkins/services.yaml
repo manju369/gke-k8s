@@ -2,27 +2,15 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: jenkins-ui
+  name: jenkins-ext
   namespace: jenkins
 spec:
   selector:
     app: jenkins-master
   ports:
-    - protocol: TCP
+    - name: httpport
       port: 8080
       targetPort: 8080
-      name: ui
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: jenkins-discovery
-  namespace: jenkins
-spec:
-  selector:
-    app: jenkins-master
-  ports:
-    - protocol: TCP
+    - name: jnlpport
       port: 50000
       targetPort: 50000
-      name: agents

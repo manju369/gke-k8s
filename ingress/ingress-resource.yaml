@@ -14,13 +14,29 @@ metadata:
     #nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
     #nginx.ingress.kubernetes.io/affinity-mode: persistent
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header X-Script-Name /pgadmin-stage;
+      proxy_set_header X-Script-Name /app;
    # nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
 spec:
   rules:
-  - host: "34.70.248.62.nip.io"
+  - host: "34.172.201.69.nip.io"
     http:
       paths:
+     
+      - path: /kibana
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: ingress-kibana
+            port:
+              number: 5601
+
+      - path: /jenkins
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: ingress-jenkins
+            port:
+              number: 8080
 
       - pathType: ImplementationSpecific
         path: /pgadmin-stage
@@ -62,13 +78,6 @@ spec:
             port:
               number: 9090
 
-      - path: /app/kibana#
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: kibana-svc
-            port:
-              number: 5601
 
       - path: /dumbworks/grafana
         pathType: ImplementationSpecific

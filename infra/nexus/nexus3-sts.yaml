@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nexus
+  namespace: infra
+spec:
+  replicas: 1
+  serviceName: nexus
+  selector:
+    matchLabels:
+      app: nexus
+  template:
+    metadata:
+      labels:
+        app: nexus
+    spec:
+      initContainers:
+      - name: change-ownership-container
+        image: busybox
+        command: ["/bin/chown","-R","1000:1000", "/nexus-data"]
+        securityContext:
+          runAsUser: 0
+          privileged: true
+        volumeMounts:
+        - name: nexus-data
+          mountPath: /nexus-data
+      containers:
+      - name: nexus3
+        image: sonatype/nexus3:latest
+        securityContext:
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+        resources:
+          limits:
+            memory: "4Gi"
+            cpu: "1000m"
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+        ports:
+          - containerPort: 8081
+        volumeMounts:
+          - name: nexus-data
+            mountPath: /nexus-data
+      volumes:
+        - name: nexus-data
+          persistentVolumeClaim:
+            claimName: pvc-nexus-data

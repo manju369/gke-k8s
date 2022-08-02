@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: jenkins-quota
+  namespace: jenkins
+spec:
+  hard:
+    pods: "5"

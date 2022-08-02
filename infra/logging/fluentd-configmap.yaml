@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+  namespace: infra
+data:
+  fluent.conf: |
+    ################################################################
+    # This source gets all logs from local docker host
+    #@include pods-kind-fluent.conf
+    @include pods-fluent.conf
+    @include file-fluent.conf
+    @include elastic-fluent.conf
+
+  pods-fluent.conf: |-
+    <source>
+      @type tail
+      read_from_head true
+      tag kubernetes.*
+      path /var/log/containers/*.log
+      pos_file /var/log/fluentd-containers.log.pos
+      exclude_path ["/var/log/containers/fluent*"]
+      <parse>
+      #  @type kubernetes
+      # @type "#{ENV['FLUENT_CONTAINER_TAIL_PARSER_TYPE'] || 'json'}"
+        @type multi_format
+      #  expression /^(?<time>.+) (?<stream>stdout|stderr)( (?<logtag>.))? (?<log>.*)$/
+      #  time_format %Y-%m-%dT%H:%M:%S.%NZ
+      </parse>
+    </source>
+
+  file-fluent.conf: |-
+    <match **>
+      @type file
+      path /tmp/file-test.log
+    </match>
+
+  elastic-fluent.conf: |-
+    <match **>
+      @type elasticsearch
+      host elasticsearch.infra.svc.cluster.local
+      port 9200
+      #user "elastic"
+      #password "changeme"
+      index_name fluentd-k8s
+      type_name fluentd
+    </match>

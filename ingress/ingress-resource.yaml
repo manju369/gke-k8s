@@ -26,12 +26,19 @@ spec:
       
       - path: /jenkins
         pathType: ImplementationSpecific
-        #pathType: Prefix
         backend:
           service:
             name: ingress-jenkins
             port:
               number: 8080
+
+      - path: /nexus
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: ingress-nexus
+            port:
+              number: 8081
      
       - path: /kibana
         pathType: ImplementationSpecific

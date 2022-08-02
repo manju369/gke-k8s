@@ -14,3 +14,12 @@ metadata:
 spec:
   type: ExternalName
   externalName: jenkins-ext.jenkins.svc.cluster.local
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ingress-nexus
+spec:
+  type: ExternalName
+  externalName: nexus.infra.svc.cluster.local

@@ -37,6 +37,9 @@ spec:
           requests:
             memory: "2Gi"
             cpu: "500m"
+        env:
+        - name: NEXUS_CONTEXT
+          value: nexus
         ports:
           - containerPort: 8081
         volumeMounts:

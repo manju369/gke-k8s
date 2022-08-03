@@ -19,6 +19,10 @@ metadata:
     # nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
     #nginx.ingress.kubernetes.io/add-base-url: "true"
 spec:
+  tls:
+    - secretName: 34.172.201.69.nip.io-tls
+      hosts:
+      - 34.172.201.69.nip.io
   rules:
   - host: "34.172.201.69.nip.io"
     http:

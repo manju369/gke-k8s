@@ -24,6 +24,7 @@ spec:
     - secretName: 34.172.201.69.nip.io-tls
       hosts:
       - 34.172.201.69.nip.io
+
   rules:
   - host: "34.172.201.69.nip.io"
     http:

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: metrics-properties-configmap
-  namespace: default
+  namespace: spark-operator
 data:
   metrics.properties: | 
     "spark.metrics.conf.*.sink.graphite.class" = "org.apache.spark.metrics.sink.GraphiteSink"

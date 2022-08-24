@@ -24,3 +24,11 @@ spec:
   type: ExternalName
   externalName: nexus.infra.svc.cluster.local
 
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ingress-jupyter
+spec:
+  type: ExternalName
+  externalName: proxy-public.dev.svc.cluster.local

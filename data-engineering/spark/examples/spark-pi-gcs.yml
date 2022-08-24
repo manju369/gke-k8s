@@ -2,7 +2,7 @@ apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
   name: foo-gcs-spark
-  namespace: default
+  namespace: spark-operator
 spec:
   type: Scala
   mode: cluster

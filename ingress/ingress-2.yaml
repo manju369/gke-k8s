@@ -27,7 +27,14 @@ spec:
   - host: "34.172.201.69.nip.io"
     http:
       paths:
-      
+
+      - pathType: ImplementationSpecific
+        path: /dev/jupyter
+        backend:
+          service:
+            name: ingress-jupyter 
+            port:
+              number: 80
 
       - pathType: ImplementationSpecific
         path: /pgadmin-stage
@@ -45,13 +52,6 @@ spec:
             port:
               number: 9080
 
-      - path: /dumbworks/development/jupyter/*
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: proxy-public
-            port:
-              number: 80
 
       - path: /dumbworks/airflow/*
         pathType: ImplementationSpecific

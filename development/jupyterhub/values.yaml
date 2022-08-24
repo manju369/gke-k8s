@@ -37,7 +37,7 @@ hub:
       nodePort:
     extraPorts: []
     loadBalancerIP:
-  baseUrl: /manjuworks/development/jupyter
+  baseUrl: /dev/jupyter
   cookieSecret:
   initContainers: []
   fsGid: 1000
@@ -174,7 +174,8 @@ proxy:
     rollingUpdate:
   # service relates to the proxy-public service
   service:
-    type: NodePort
+    #type: NodePort
+    type: ClusterIP
     labels: {}
     annotations: {}
     nodePorts:
@@ -407,6 +408,23 @@ singleuser:
       description: "PySpark Notebook"
       kubespawner_override:
         image: manju369/jupyter-spark_3.2.0-hadoop_3.2:1
+        cpu_limit: 1
+        cpu_guarantee: 1
+        mem_limit: 2G
+        mem_guarantee: 2G
+    - display_name: "1c_2G manju369/jupyter-spark_3.2.0-hadoop_3.2:4"
+      description: "Basic Spark-3.2 and Hadoop-3.2 Notebook"
+      kubespawner_override:
+        image: manju369/jupyter-spark_3.2.0-hadoop_3.2:4
+        cpu_limit: 1
+        cpu_guarantee: 1
+        mem_limit: 2G
+        mem_guarantee: 2G
+  
+    - display_name: "1c_2G manju369/jupyter-spark_3.2.0-hadoop_3.2:5"
+      description: "Basic Spark-3.2 and Hadoop-3.2 Notebook"
+      kubespawner_override:
+        image: manju369/jupyter-spark_3.2.0-hadoop_3.2:5
         cpu_limit: 1
         cpu_guarantee: 1
         mem_limit: 2G

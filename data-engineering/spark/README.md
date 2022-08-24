@@ -4,6 +4,9 @@
 ``` helm upgrade --install spark-operator-release  spark-operator/spark-operator --namespace default --debug --set sparkJobNamespace=default --set logLevel=10 --set image.tag=v1beta2-1.3.7-3.1.1 --set serviceAccounts.spark.name=spark ```
 
 
+```helm upgrade --install spark-operator-release  spark-operator/spark-operator --namespace spark-operator  --set sparkJobNamespace=spark-operator --set enableWebhook=true --set webhookPort=443 --set enableMetrics=true --set logLevel=10 --set image.tag=v1beta2-1.3.7-3.1.1 --set serviceAccounts.spark.name=spark --debug ```
+
+
 ```kubectl get  sparkapplication --namespace default ```
 
 

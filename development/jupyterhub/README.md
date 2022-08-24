@@ -1,8 +1,8 @@
 
-helm install jupyterhub  jupyterhub/jupyterhub  --namespace default --values=values.yaml  --debug
+helm install jupyterhub  jupyterhub/jupyterhub  --namespace dev --values=values.yaml  --debug
 
  
-helm upgrade --install jupyterhub  jupyterhub/jupyterhub  --namespace default --values=values.yaml --debug
+helm upgrade --install jupyterhub  jupyterhub/jupyterhub  --namespace dev --values=values.yaml --debug
 
 
 URL

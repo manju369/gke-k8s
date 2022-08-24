@@ -20,17 +20,23 @@ spec:
       initContainers:
       - name: change-ownership-container
         image: busybox
-        command: ["/bin/chown","-R","1000:1000", "/var/jenkins_home"]
+        command: ["/bin/sh", "-c"]
+        args: 
+          - /bin/chown -R 1000:1000 /var/jenkins_home ;
+            /bin/chmod 777 /var/run/docker.sock ;
+            echo "init done" ;         
         securityContext:
           runAsUser: 0
           privileged: true
         volumeMounts:
         - name: jenkins-home
           mountPath: /var/jenkins_home
+        - mountPath: /var/run/docker.sock
+          name: docker-sock
       containers:
       - name: jenkins
-        image: jenkins/jenkins:2.346.2
-        #imagePullPolicy: Always
+        image: manju369/jenkins:2.356-jdk8
+        imagePullPolicy: Always
         ports:
         - name: httpport
           containerPort: 8080
@@ -58,7 +64,13 @@ spec:
         volumeMounts:
         - mountPath: /var/jenkins_home
           name: jenkins-home
+        - mountPath: /var/run/docker.sock
+          name: docker-sock
       volumes:
       - name: jenkins-home
         persistentVolumeClaim:
           claimName: pvc-jenkins-home
+      - name: docker-sock
+        hostPath:
+          path: /var/run/docker.sock
+          #type: File

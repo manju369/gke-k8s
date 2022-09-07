@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: airflow-logs-pvc
-  namespace: default
+  namespace: data-eng
   labels:
     app: airflow-logs
 spec:

@@ -1,0 +1,48 @@
+def GIT_BRANCH='main'
+pipeline {
+	agent any
+	stages {
+		stage("Checkout code") {
+			steps {
+				git branch: 'main', url: 'https://github.com/kubernetes-international/ms3.git'
+				sh 'printenv'
+		}
+    }
+
+	// Develop chain
+
+		stage('Build image with tag latest for develop branch') {
+			//when{
+			//	expression{env.GIT_BRANCH == 'main'}
+			//}
+			steps{
+				script {
+					ms = docker.build("${gcp_project_name}/${microservice_name}:${env.BUILD_ID}","-f ./cicd/Dockerfile ./ ")
+				}
+			}
+		}
+
+		stage('Push image with tag latest for develop branch') {
+			when{
+				expression{GIT_BRANCH == 'main'}
+			}
+			steps{
+				script {
+					docker.withRegistry("${gcr_url}", "gcr:${gcr_admin_key}") {
+						ms.push("${env.BUILD_ID}")
+					}                    
+				}
+			}
+		}
+
+		stage ('Deploy image on dev cluster') {
+                       //deploy using diff way
+			when{
+				expression{GIT_BRANCH == 'main'}
+			}
+			steps{
+				build job: 'deploy-to-k8s'
+			}    
+		}
+	}
+}

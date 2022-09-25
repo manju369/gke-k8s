@@ -1218,7 +1218,7 @@ config:
     auth_backend: airflow.api.auth.backend.deny_all
   logging:
     remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
-    remote_logging: 'True'
+    remote_logging: 'False'
     colored_console_log: 'False'
   metrics:
     statsd_on: '{{ ternary "True" "False" .Values.statsd.enabled }}'
@@ -1227,7 +1227,7 @@ config:
     statsd_host: '{{ printf "%s-statsd" .Release.Name }}'
   webserver:
     enable_proxy_fix: 'True'
-    base_url: 'http://127.0.0.1:8080/dumbworks/airflow'
+    base_url: 'http://127.0.0.1:8080/dataprocessing/airflow'
     # For Airflow 1.10
     rbac: 'True'
   celery:

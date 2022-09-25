@@ -6,12 +6,13 @@ metadata:
 spec:
   type: Scala
   mode: cluster
+  timeToLiveSeconds: 360
   image: manju369/spark-3.2.0-bin-hadoop3.2-gcs:1 
   imagePullPolicy: IfNotPresent
   mainClass: org.apache.spark.examples.SparkPi
   mainApplicationFile: "gs://steam-circlet-first-bucket/spark-jars/spark-examples_2.12-3.2.0.jar"
   hadoopConf:
-    "fs.gs.project.id": "arctic-surf-351605"
+    "fs.gs.project.id": "my-test-project-361204"
     "fs.gs.system.bucket": "steam-circlet-first-bucket"
     "google.cloud.auth.service.account.enable": "true"
     "google.cloud.auth.service.account.json.keyfile": "/mnt/secrets/key.json"

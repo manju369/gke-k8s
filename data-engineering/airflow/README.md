@@ -14,9 +14,13 @@ kubectl apply -f airflow-logs-pvc.yml
 
 #ssh-key shouldn't be encoded manually
 
-kubectl create secret generic airflow-ssh-secret --from-file=gitSshKey=/Users/manjunath/Downloads/bitbucket_ssh-1
+kubectl create secret generic airflow-ssh-secret --from-file=gitSshKey=/Users/admin/.ssh/id_rsa -n data-eng
 
+#airflow-worker service-account wont be having permission to create object in sparkoperator.k8s.io by default so , execute below CRB  
 kubectl apply -f airflow-worker-spark-service-account.yml 
+
+
+
 
 kubectl exec -it airflow-scheduler-86d8459b64-th6rx -c scheduler /bin/bash #OR
 

@@ -2,7 +2,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: jenkins-ext
+  name: jenkins
   namespace: jenkins
 spec:
   selector:

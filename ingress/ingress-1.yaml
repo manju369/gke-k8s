@@ -21,12 +21,12 @@ metadata:
     #nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/16"
 spec:
   tls:
-    - secretName: 34.172.201.69.nip.io-tls
+    - secretName: 35.238.113.121.nip.io-tls
       hosts:
-      - 34.172.201.69.nip.io
+      - 35.238.113.121.nip.io
 
   rules:
-  - host: "34.172.201.69.nip.io"
+  - host: "35.238.113.121.nip.io"
     http:
       paths:
       
@@ -38,7 +38,7 @@ spec:
             port:
               number: 8080
 
-      - path: /nexus
+      - path: /infra/nexus
         pathType: ImplementationSpecific
         backend:
           service:

@@ -13,7 +13,7 @@ metadata:
   name: ingress-jenkins
 spec:
   type: ExternalName
-  externalName: jenkins-ext.jenkins.svc.cluster.local
+  externalName: jenkins.jenkins.svc.cluster.local
 
 ---
 kind: Service
@@ -32,3 +32,11 @@ metadata:
 spec:
   type: ExternalName
   externalName: proxy-public.dev.svc.cluster.local
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ingress-airflow
+spec:
+  type: ExternalName
+  externalName: airflow-webserver.data-eng.svc.cluster.local

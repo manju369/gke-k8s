@@ -20,16 +20,16 @@ metadata:
     #nginx.ingress.kubernetes.io/add-base-url: "true"
 spec:
   tls:
-    - secretName: 34.172.201.69.nip.io-tls
+    - secretName: 35.238.113.121.nip.io-tls
       hosts:
-      - 34.172.201.69.nip.io
+      - 35.238.113.121.nip.io
   rules:
-  - host: "34.172.201.69.nip.io"
+  - host: "35.238.113.121.nip.io"
     http:
       paths:
 
       - pathType: ImplementationSpecific
-        path: /dev/jupyter
+        path: /development/jupyter
         backend:
           service:
             name: ingress-jupyter 
@@ -53,11 +53,11 @@ spec:
               number: 9080
 
 
-      - path: /dumbworks/airflow/*
+      - path: /dataprocessing/airflow
         pathType: ImplementationSpecific
         backend:
           service:
-            name: gke-test-airflow-webserver
+            name: ingress-airflow
             port:
               number: 8080
 

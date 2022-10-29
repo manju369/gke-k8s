@@ -1,0 +1,38 @@
+## Get the name of the token that was automatically generated for the ServiceAccount `jenkins-robot`.
+##$ kubectl -n <namespace> get serviceaccount jenkins-admin -o go-template --template='{{range .secrets}}{{.name}}{{"\n"}}{{end}}'
+# Output: jenkins-admin-token-d6d8z
+
+# Retrieve the token and decode it using base64.
+#$ kubectl -n <namespace> get secrets jenkins-admin-token-d6d8z -o go-template --template '{{index .data "token"}}' | base64 -d
+#output: eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2V[...]
+#https://plugins.jenkins.io/kubernetes-cli/
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: jenkins-admin
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins-admin
+  namespace: infra
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: jenkins-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: jenkins-admin
+subjects:
+- kind: ServiceAccount
+  name: jenkins-admin
+  namespace: infra

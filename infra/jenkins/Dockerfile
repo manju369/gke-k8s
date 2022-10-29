@@ -9,4 +9,5 @@ RUN echo "deb [arch=$(dpkg --print-architecture) \
   $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
 RUN apt-get update && apt-get install -y docker-ce-cli
 USER jenkins
+RUN cd /var/jenkins_home/ ; curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl" ; chmod u+x ./kubectl 
 RUN jenkins-plugin-cli --plugins "blueocean:1.25.6 docker-workflow:1.29"

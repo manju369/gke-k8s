@@ -1,4 +1,5 @@
-FROM jenkins/jenkins:2.356-jdk8
+#FROM jenkins/jenkins:2.356-jdk8
+FROM --platform=linux/amd64 jenkins/jenkins:lts-jdk11
 USER root
 RUN apt-get update && apt-get install -y lsb-release
 RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
